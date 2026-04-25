@@ -1,0 +1,226 @@
+/* Strands Sapiens — minimal glassmorphic theme (sapiens palette: warm amber + Meta blue) */
+
+/* ============================================= */
+/* Light mode                                    */
+/* ============================================= */
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #1a1a1a;
+    --md-primary-bg-color: #fafafa;
+    --md-accent-fg-color: #F97316;         /* sapiens amber */
+    --md-default-bg-color: #fafafa;
+    --md-default-fg-color: #2a2a2a;
+    --md-default-fg-color--light: #555555;
+    --md-default-fg-color--lighter: #888888;
+    --md-default-fg-color--lightest: #bbbbbb;
+    --md-typeset-a-color: #C2410C;         /* deep amber for links */
+    --md-code-bg-color: #f4f4f5;
+    --md-code-fg-color: #3f3f46;
+
+    --ss-accent-warm: #F97316;
+    --ss-accent-blue: #0866FF;
+    --ss-accent-pink: #F472B6;
+    --ss-bg: #fafafa;
+    --ss-bg-surface: #f4f4f5;
+    --ss-glass-bg: rgba(244, 244, 245, 0.7);
+    --ss-glass-border: rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================= */
+/* Dark mode                                     */
+/* ============================================= */
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color: #f5f5f5;
+    --md-primary-bg-color: #0b0b0d;
+    --md-accent-fg-color: #FB923C;         /* brighter amber in dark */
+    --md-default-bg-color: #0b0b0d;
+    --md-default-fg-color: #e5e5e5;
+    --md-default-fg-color--light: #a1a1aa;
+    --md-default-fg-color--lighter: #71717a;
+    --md-default-fg-color--lightest: #3f3f46;
+    --md-typeset-a-color: #FB923C;
+    --md-code-bg-color: #18181b;
+    --md-code-fg-color: #d4d4d8;
+
+    --ss-accent-warm: #FB923C;
+    --ss-accent-blue: #60A5FA;
+    --ss-accent-pink: #F472B6;
+    --ss-bg: #0b0b0d;
+    --ss-bg-surface: #18181b;
+    --ss-glass-bg: rgba(24, 24, 27, 0.65);
+    --ss-glass-border: rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================= */
+/* Typography                                    */
+/* ============================================= */
+body, .md-typeset {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                 "Inter", "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.md-typeset h1 {
+    background: linear-gradient(135deg,
+        var(--ss-accent-warm) 0%,
+        var(--ss-accent-pink) 50%,
+        var(--ss-accent-blue) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ============================================= */
+/* Header / nav                                  */
+/* ============================================= */
+.md-header {
+    background: var(--ss-glass-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--ss-glass-border);
+    box-shadow: none;
+}
+
+.md-header__title {
+    font-weight: 700;
+}
+
+/* ============================================= */
+/* Code blocks                                   */
+/* ============================================= */
+.md-typeset pre > code,
+.md-typeset .highlight pre {
+    border-radius: 10px;
+    border: 1px solid var(--ss-glass-border);
+}
+
+/* Inline code — tinted amber */
+.md-typeset code {
+    background-color: rgba(249, 115, 22, 0.08);
+    color: var(--md-accent-fg-color);
+    border-radius: 4px;
+    padding: 0.1em 0.3em;
+    font-size: 0.86em;
+}
+
+/* ============================================= */
+/* Admonitions                                   */
+/* ============================================= */
+.md-typeset .admonition {
+    border-radius: 10px;
+    border-left-width: 3px;
+}
+
+/* ============================================= */
+/* Cards (home page grid)                        */
+/* ============================================= */
+.md-typeset .grid.cards > ol > li,
+.md-typeset .grid.cards > ul > li {
+    border-radius: 14px;
+    border: 1px solid var(--ss-glass-border);
+    background: var(--ss-glass-bg);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.md-typeset .grid.cards > ol > li:hover,
+.md-typeset .grid.cards > ul > li:hover {
+    transform: translateY(-2px);
+    border-color: var(--ss-accent-warm);
+    box-shadow: 0 8px 24px -8px rgba(249, 115, 22, 0.25);
+}
+
+/* ============================================= */
+/* Tables                                        */
+/* ============================================= */
+.md-typeset table:not([class]) {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--ss-glass-border);
+}
+
+.md-typeset table:not([class]) th {
+    background: var(--ss-bg-surface);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+/* ============================================= */
+/* Buttons (for "Get Started" style CTAs)        */
+/* ============================================= */
+.md-typeset .md-button {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.md-typeset .md-button--primary {
+    background: linear-gradient(135deg, var(--ss-accent-warm), var(--ss-accent-pink));
+    border: none;
+    color: white;
+}
+
+.md-typeset .md-button--primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+/* ============================================= */
+/* Sidebar TOC                                   */
+/* ============================================= */
+.md-nav__link--active {
+    color: var(--md-accent-fg-color) !important;
+    font-weight: 600;
+}
+
+/* ============================================= */
+/* Scrollbar (webkit only)                       */
+/* ============================================= */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: var(--ss-glass-border);
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--ss-accent-warm);
+}
+
+/* ============================================= */
+/* Footer                                        */
+/* ============================================= */
+.md-footer {
+    background: var(--ss-bg-surface);
+    border-top: 1px solid var(--ss-glass-border);
+}
+
+/* ============================================= */
+/* Home page hero                                */
+/* ============================================= */
+.ss-hero {
+    text-align: center;
+    padding: 2rem 0 1rem;
+}
+.ss-hero img {
+    width: 160px;
+    height: auto;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 8px 24px rgba(249, 115, 22, 0.25));
+}
+.ss-hero h1 {
+    margin-top: 0;
+    font-size: 2.8rem;
+}
+.ss-hero .ss-sub {
+    font-size: 1.15rem;
+    color: var(--md-default-fg-color--light);
+    font-weight: 500;
+    margin-top: -0.5rem;
+}

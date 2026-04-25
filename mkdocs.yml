@@ -1,0 +1,95 @@
+site_name: Strands Sapiens
+site_url: https://cagataycali.github.io/strands-sapiens
+site_description: "Strands @tool wrappers for Meta Sapiens2 — high-resolution human-centric vision (segmentation, normals, albedo, pointmap, 308-kpt pose, pretrain backbone)."
+repo_url: https://github.com/cagataycali/strands-sapiens
+repo_name: cagataycali/strands-sapiens
+
+extra_css:
+  - stylesheets/extra.css?v=1
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quickstart: getting-started/quickstart.md
+    - Checkpoints: getting-started/checkpoints.md
+  - Guide:
+    - Segmentation: guide/segmentation.md
+    - Surface Normals: guide/normals.md
+    - Albedo: guide/albedo.md
+    - Pointmap (3D): guide/pointmap.md
+    - Pose (308 kpts): guide/pose.md
+    - Pretrain Backbone: guide/backbone.md
+    - Jetson / Thor: guide/jetson.md
+  - Examples:
+    - Overview: examples/overview.md
+    - Batch seg on a folder: examples/batch-seg.md
+    - Pose + seg pipeline: examples/pose-seg.md
+    - Backbone features for RAG: examples/backbone-features.md
+  - Architecture: architecture.md
+  - API Reference: api-reference.md
+  - Changelog: changelog.md
+
+theme:
+  name: material
+  logo: strands-sapiens-logo.svg
+  favicon: strands-sapiens-logo.svg
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: default
+      primary: white
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: black
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.betterem
+  - pymdownx.mark
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - def_list
+  - footnotes
+  - toc:
+      permalink: true
+
+plugins:
+  - search

@@ -1,6 +1,15 @@
-# strands-sapiens
+<div align="center">
+  <img src="strands-sapiens-logo.svg" alt="Strands Sapiens" width="180">
+  <h1>strands-sapiens</h1>
+  <p><strong>Give your agent a body.</strong> Pixel-perfect human understanding, as tools.</p>
+  <p>
+    <a href="https://cagataycali.github.io/strands-sapiens/"><img alt="Docs" src="https://img.shields.io/badge/docs-latest-F97316?style=flat-square"></a>
+    <a href="https://github.com/cagataycali/strands-sapiens"><img alt="GitHub" src="https://img.shields.io/badge/github-cagataycali%2Fstrands--sapiens-0866FF?style=flat-square&logo=github"></a>
+  </p>
+</div>
 
-**Strands Agents `@tool` wrappers around Meta [Sapiens2](https://github.com/facebookresearch/sapiens2)** —
+---
+
 a family of high-resolution transformers pretrained on 1B human images, for
 human-centric vision tasks.
 

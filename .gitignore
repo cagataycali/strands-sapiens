@@ -27,3 +27,6 @@ htmlcov/
 *.pth
 *.safetensors
 *.npy
+
+# mkdocs build output
+site/
