@@ -11,17 +11,17 @@ Tested on NVIDIA Thor with:
 
 from __future__ import annotations
 
-import os
 import traceback
 from pathlib import Path
-from typing import List, Optional
 
 from strands import tool
 
 from ._common import (
     TASK_SIZES,
+    arch_name,
     checkpoint_path,
     checkpoint_root,
+    ensure_checkpoint_root,
     ensure_output,
     err,
     ok,
@@ -41,31 +41,33 @@ def sapiens_info() -> dict:
     Returns:
         A dict with keys:
           - ``checkpoint_root``: resolved path
+          - ``checkpoint_root_exists``: bool
           - ``available``: mapping of ``task -> [sizes_present]``
+          - ``detector_present``: bool (rtmdet_m.pth)
           - ``cuda``: {available, device_count, device_name}
           - ``sapiens_package``: bool (can ``import sapiens``)
     """
-    root = checkpoint_root()
+    root, root_exists = ensure_checkpoint_root()
     available: dict[str, list[str]] = {}
-    for task, sizes in TASK_SIZES.items():
-        present = [s for s in sizes if checkpoint_path(task, s).exists()]
-        if present:
-            available[task] = present
+    if root_exists:
+        for task, sizes in TASK_SIZES.items():
+            present = [s for s in sizes if checkpoint_path(task, s).exists()]
+            if present:
+                available[task] = present
 
-    # detector is special
-    detector = (root / "detector" / "rtmdet_m.pth").exists()
+    detector = (root / "detector" / "rtmdet_m.pth").exists() if root_exists else False
 
+    cuda: dict = {"available": False, "device_count": 0, "device_name": None}
     try:
         import torch  # type: ignore
-        cuda = {
-            "available": bool(torch.cuda.is_available()),
-            "device_count": int(torch.cuda.device_count()) if torch.cuda.is_available() else 0,
-            "device_name": (
-                torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
-            ),
-        }
+        if torch.cuda.is_available():
+            cuda = {
+                "available": True,
+                "device_count": int(torch.cuda.device_count()),
+                "device_name": torch.cuda.get_device_name(0),
+            }
     except Exception as e:  # noqa: BLE001
-        cuda = {"available": False, "error": str(e)}
+        cuda = {"available": False, "device_count": 0, "device_name": None, "error": str(e)}
 
     try:
         import sapiens  # type: ignore  # noqa: F401
@@ -76,6 +78,7 @@ def sapiens_info() -> dict:
     return ok(
         "sapiens info",
         checkpoint_root=str(root),
+        checkpoint_root_exists=root_exists,
         available=available,
         detector_present=detector,
         cuda=cuda,
@@ -94,17 +97,20 @@ def sapiens_backbone(
     img_h: int = 1024,
     img_w: int = 768,
     device: str = "cuda:0",
-    save_features_to: Optional[str] = None,
+    save_features_to: str | None = None,
+    overwrite: bool = False,
 ) -> dict:
     """Run a forward pass through a pretrained Sapiens2 backbone and return
     dense features for a single image.
 
     Args:
-        image_path:         path to an RGB image (jpg/png).
+        image_path:         path to an RGB image (jpg/png/webp/bmp/tif).
         model_size:         one of ``0.1b | 0.4b | 0.8b | 1b | 1b_4k | 5b``.
         img_h, img_w:       target input size (H, W). Use 4096x3072 for ``1b_4k``.
         device:             torch device string.
         save_features_to:   optional ``.pt`` path to dump the feature tensor.
+        overwrite:          if False (default), error instead of overwriting
+                            an existing ``save_features_to`` file.
 
     Returns:
         dict with feature shape + optional file path.
@@ -115,7 +121,8 @@ def sapiens_backbone(
         if not ckpt.exists():
             return err(f"Missing checkpoint: {ckpt}")
 
-        import cv2, numpy as np, torch  # type: ignore
+        import cv2  # type: ignore
+        import torch  # type: ignore
         from safetensors.torch import load_file  # type: ignore
         from sapiens.backbones.standalone.sapiens2 import Sapiens2  # type: ignore
 
@@ -123,20 +130,47 @@ def sapiens_backbone(
         if not img_path.is_file():
             return err(f"Image not found: {img_path}")
 
-        arch = f"sapiens2_{size.replace('_', '')}" if size != "1b_4k" else "sapiens2_1b"
-        model = Sapiens2(arch=arch, img_size=(img_h, img_w), patch_size=16).eval().to(device)
+        if save_features_to and not overwrite:
+            if Path(save_features_to).expanduser().resolve().exists():
+                return err(
+                    f"Refusing to overwrite {save_features_to} "
+                    "(pass overwrite=True)"
+                )
+
+        arch = arch_name(size)
+        model = (
+            Sapiens2(arch=arch, img_size=(img_h, img_w), patch_size=16)
+            .eval()
+            .to(device)
+        )
         model.load_state_dict(load_file(str(ckpt)))
 
-        img = cv2.imread(str(img_path))[:, :, ::-1]  # BGR->RGB
+        # BGR->RGB via explicit conversion (avoids stride/view issues).
+        img_bgr = cv2.imread(str(img_path))
+        if img_bgr is None:
+            return err(f"cv2.imread returned None for {img_path}")
+        img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (img_w, img_h))
-        x = torch.from_numpy(img.copy()).permute(2, 0, 1).float().unsqueeze(0) / 255.0
-        # ImageNet normalization
-        mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
-        std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
-        x = ((x - mean) / std).to(device)
+        x = (
+            torch.from_numpy(img).permute(2, 0, 1).float().unsqueeze(0).to(device)
+            / 255.0
+        )
+        # ImageNet normalization (on-device).
+        mean = torch.tensor([0.485, 0.456, 0.406], device=device).view(1, 3, 1, 1)
+        std = torch.tensor([0.229, 0.224, 0.225], device=device).view(1, 3, 1, 1)
+        x = (x - mean) / std
 
         with torch.no_grad():
-            features = model(x)[0]
+            out = model(x)
+
+        # Sapiens2.forward may return a tensor, a list/tuple of stage features,
+        # or a dict. Prefer the final stage for downstream use.
+        if isinstance(out, (list, tuple)):
+            features = out[-1]
+        elif isinstance(out, dict):
+            features = out.get("features", out.get("out", next(iter(out.values()))))
+        else:
+            features = out
 
         shape = list(features.shape)
         saved = None
@@ -156,6 +190,49 @@ def sapiens_backbone(
 
 
 # ---------------------------------------------------------------------------
+# Inline visualizers (don't rely on upstream private APIs)
+# ---------------------------------------------------------------------------
+
+def _normal_to_rgb(normal_chw):
+    """Map (3,H,W) normals in [-1,1] to a BGR uint8 image for display."""
+    import numpy as np
+    n = normal_chw
+    # l2-normalize across channel axis; guard against zeros.
+    denom = np.linalg.norm(n, axis=0, keepdims=True)
+    denom = np.where(denom < 1e-6, 1.0, denom)
+    n = n / denom
+    rgb = ((n.transpose(1, 2, 0) * 0.5 + 0.5) * 255.0).clip(0, 255).astype("uint8")
+    # cv2 writes BGR
+    return rgb[:, :, ::-1]
+
+
+def _albedo_to_rgb(albedo_chw):
+    """Map (3,H,W) albedo in [0,1] (or arbitrary float) to BGR uint8."""
+    import numpy as np
+    a = albedo_chw.transpose(1, 2, 0)
+    lo, hi = float(a.min()), float(a.max())
+    if hi - lo < 1e-6:
+        a_norm = np.zeros_like(a)
+    else:
+        a_norm = (a - lo) / (hi - lo)
+    rgb = (a_norm * 255.0).clip(0, 255).astype("uint8")
+    return rgb[:, :, ::-1]
+
+
+def _pointmap_to_rgb(pm_chw):
+    """Visualize a (3,H,W) pointmap as a false-color depth image (from z)."""
+    import cv2  # type: ignore
+    import numpy as np
+    z = pm_chw[2]
+    lo, hi = float(np.percentile(z, 2)), float(np.percentile(z, 98))
+    if hi - lo < 1e-6:
+        z_norm = np.zeros_like(z, dtype="uint8")
+    else:
+        z_norm = ((z - lo) / (hi - lo) * 255.0).clip(0, 255).astype("uint8")
+    return cv2.applyColorMap(z_norm, cv2.COLORMAP_TURBO)
+
+
+# ---------------------------------------------------------------------------
 # Generic "dense task" runner (seg / normal / albedo / pointmap)
 # ---------------------------------------------------------------------------
 
@@ -165,6 +242,33 @@ _DENSE_TASKS = {
     "albedo":   ("configs/albedo/metasim_render_people",   "sapiens2_{size}_albedo_metasim_render_people-1024x768"),
     "pointmap": ("configs/pointmap/metasim_render_people", "sapiens2_{size}_pointmap_metasim_render_people-1024x768"),
 }
+
+
+def _find_dense_config(task: str, size: str):
+    """Resolve the config file for a dense task, with a robust rglob fallback.
+
+    Returns:
+        (cfg_file: Path, dense_root: Path) on success.
+    Raises:
+        FileNotFoundError if no plausible config found.
+    """
+    import sapiens.dense as _dense  # type: ignore
+    dense_root = Path(_dense.__file__).parent
+    cfg_dir, cfg_tmpl = _DENSE_TASKS[task]
+    cfg_file = dense_root / cfg_dir / f"{cfg_tmpl.format(size=size)}.py"
+    if cfg_file.exists():
+        return cfg_file, dense_root
+    # Fallback: glob for anything matching `sapiens2_{size}_{task}*.py` under the
+    # task's config tree. Handles upstream dataset renames.
+    task_dir = dense_root / "configs" / task
+    if task_dir.is_dir():
+        candidates = sorted(task_dir.rglob(f"sapiens2_{size}_{task}*.py"))
+        if candidates:
+            return candidates[0], dense_root
+    raise FileNotFoundError(
+        f"No config found for task={task} size={size} under {dense_root}. "
+        f"Tried {cfg_file}."
+    )
 
 
 def _run_dense_task(
@@ -182,19 +286,16 @@ def _run_dense_task(
         if not ckpt.exists():
             return err(f"Missing checkpoint: {ckpt}")
 
-        import cv2, numpy as np, torch  # type: ignore
+        import cv2  # type: ignore
+        import numpy as np  # type: ignore
+        import torch  # type: ignore
         import torch.nn.functional as F  # type: ignore
-
-        # Lazy imports from sapiens.dense
         from sapiens.dense.models import init_model  # type: ignore
 
-        # Find config file (packaged inside `sapiens.dense`)
-        import sapiens.dense as _dense  # type: ignore
-        dense_root = Path(_dense.__file__).parent
-        cfg_dir, cfg_tmpl = _DENSE_TASKS[task]
-        cfg_file = dense_root / cfg_dir / f"{cfg_tmpl.format(size=size)}.py"
-        if not cfg_file.exists():
-            return err(f"Missing config file: {cfg_file}")
+        try:
+            cfg_file, _dense_root = _find_dense_config(task, size)
+        except FileNotFoundError as e:
+            return err(str(e))
 
         model = init_model(str(cfg_file), str(ckpt), device=device)
 
@@ -203,48 +304,74 @@ def _run_dense_task(
             return err(f"No images found in {in_dir}")
         out_dir = ensure_output(output_dir)
 
-        outputs: List[dict] = []
-        visualizer = None
+        # Optional seg visualizer from upstream (public API if present).
+        seg_visualizer = None
         if task == "seg":
-            from sapiens.dense.visualizers import SegVisualizer  # type: ignore
-            visualizer = SegVisualizer(class_palette_type="dome29", with_labels=False)
-        elif task == "normal":
             try:
-                from sapiens.dense.visualizers import NormalVisualizer  # type: ignore
-                visualizer = NormalVisualizer()
-            except Exception:
-                visualizer = None
-        elif task == "albedo":
-            try:
-                from sapiens.dense.visualizers import AlbedoVisualizer  # type: ignore
-                visualizer = AlbedoVisualizer()
-            except Exception:
-                visualizer = None
+                from sapiens.dense.visualizers import SegVisualizer  # type: ignore
+                seg_visualizer = SegVisualizer(
+                    class_palette_type="dome29", with_labels=False
+                )
+            except Exception:  # noqa: BLE001
+                seg_visualizer = None
 
+        outputs: list[dict] = []
         for img_path in images:
             image = cv2.imread(str(img_path))
             if image is None:
                 outputs.append({"input": str(img_path), "status": "skipped_unreadable"})
                 continue
 
-            data = model.pipeline(dict(img=image))
-            data = model.data_preprocessor(data)
+            # Upstream mm*-style pipeline: build a data dict, preprocess, forward.
+            try:
+                data = model.pipeline(dict(img=image))
+                data = model.data_preprocessor(data)
+            except AttributeError:
+                outputs.append({
+                    "input": str(img_path),
+                    "status": "skipped_api_mismatch",
+                    "note": "installed sapiens.dense init_model() lacks "
+                            ".pipeline/.data_preprocessor; wrapper needs update",
+                })
+                continue
+
             inputs = data["inputs"]
 
             with torch.no_grad():
-                logits = model(inputs)
+                try:
+                    logits = model(inputs)
+                except TypeError:
+                    # Some mm* versions expect (inputs, data_samples)
+                    logits = model(inputs, data.get("data_samples"))
 
             logits = F.interpolate(logits, size=image.shape[:2], mode="bilinear")
             base = out_dir / img_path.stem
-            ext = img_path.suffix.lstrip(".")
+            ext = img_path.suffix.lstrip(".") or "jpg"
 
             if task == "seg":
                 pred_labels = logits.argmax(dim=1).cpu().numpy().squeeze(0)
-                vis_seg = visualizer._visualize_segmentation(image, pred_labels)
-                vis_image = np.concatenate([image, vis_seg], axis=1)
-                vis_path = base.with_suffix(f".{ext}")
-                cv2.imwrite(str(vis_path), vis_image)
-                entry = {"input": str(img_path), "vis": str(vis_path)}
+                entry = {"input": str(img_path)}
+                if seg_visualizer is not None:
+                    try:
+                        # Try the public API first, then fall back.
+                        if hasattr(seg_visualizer, "visualize"):
+                            vis_seg = seg_visualizer.visualize(image, pred_labels)
+                        elif callable(seg_visualizer):
+                            vis_seg = seg_visualizer(image, pred_labels)
+                        else:
+                            vis_seg = seg_visualizer._visualize_segmentation(
+                                image, pred_labels
+                            )
+                        if vis_seg.shape[:2] != image.shape[:2]:
+                            vis_seg = cv2.resize(
+                                vis_seg, (image.shape[1], image.shape[0])
+                            )
+                        vis_image = np.concatenate([image, vis_seg], axis=1)
+                        vis_path = base.with_suffix(f".{ext}")
+                        cv2.imwrite(str(vis_path), vis_image)
+                        entry["vis"] = str(vis_path)
+                    except Exception as ve:  # noqa: BLE001
+                        entry["vis_error"] = str(ve)
                 if save_pred:
                     npy_path = base.parent / f"{base.name}_seg.npy"
                     np.save(str(npy_path), pred_labels)
@@ -252,19 +379,33 @@ def _run_dense_task(
                 outputs.append(entry)
             else:
                 pred = logits.cpu().numpy().squeeze(0)  # C x H x W
-                npy_path = base.parent / f"{base.name}_{task}.npy"
+                entry = {"input": str(img_path)}
                 if save_pred:
+                    npy_path = base.parent / f"{base.name}_{task}.npy"
                     np.save(str(npy_path), pred)
-                entry = {"input": str(img_path), "pred": str(npy_path) if save_pred else None}
-                # Best-effort visualization
-                if visualizer is not None and hasattr(visualizer, "_visualize"):
-                    try:
-                        vis = visualizer._visualize(image, pred)  # type: ignore
+                    entry["pred"] = str(npy_path)
+
+                # Inline visualization (no dependency on upstream visualizer classes).
+                try:
+                    if task == "normal":
+                        vis = _normal_to_rgb(pred)
+                    elif task == "albedo":
+                        vis = _albedo_to_rgb(pred)
+                    elif task == "pointmap":
+                        vis = _pointmap_to_rgb(pred)
+                    else:
+                        vis = None
+                    if vis is not None:
+                        if vis.shape[:2] != image.shape[:2]:
+                            vis = cv2.resize(vis, (image.shape[1], image.shape[0]))
                         vis_path = base.with_suffix(f".{ext}")
-                        cv2.imwrite(str(vis_path), np.concatenate([image, vis], axis=1))
+                        cv2.imwrite(
+                            str(vis_path), np.concatenate([image, vis], axis=1)
+                        )
                         entry["vis"] = str(vis_path)
-                    except Exception:
-                        pass
+                except Exception as ve:  # noqa: BLE001
+                    entry["vis_error"] = str(ve)
+
                 outputs.append(entry)
 
         return ok(
@@ -293,10 +434,6 @@ def sapiens_seg(
 ) -> dict:
     """29-class body-part segmentation.
 
-    Classes (see ``docs/SEG.md``): background, apparel, eyeglass, face_neck,
-    hair, feet/hands/arms/legs (L/R), torso, upper/lower clothing, shoes, socks,
-    lips, teeth, tongue.
-
     Args:
         input_path:  image file OR directory of images.
         output_dir:  where to save visualizations (and ``*_seg.npy`` if ``save_pred``).
@@ -318,6 +455,7 @@ def sapiens_normal(
     """Per-pixel surface-normal estimation.
 
     Output channels represent the (x, y, z) normal vector in camera space.
+    Visualization remaps each normal from [-1,1] to RGB [0,255].
     """
     return _run_dense_task("normal", input_path, output_dir, model_size, device, save_pred)
 
@@ -344,7 +482,8 @@ def sapiens_pointmap(
 ) -> dict:
     """3D pointmap estimation — lifts each pixel to a 3D point in camera space.
 
-    Install the optional ``[pointmap]`` extra for ``open3d``-based visualization.
+    Visualization shows a colormap of the z-channel. Install the optional
+    ``[pointmap]`` extra for ``open3d``-based downstream use on the raw ``.npy``.
     """
     return _run_dense_task("pointmap", input_path, output_dir, model_size, device, save_pred)
 
@@ -352,6 +491,28 @@ def sapiens_pointmap(
 # ---------------------------------------------------------------------------
 # sapiens_pose — top-down 308-keypoint pose (requires RTMDet detector)
 # ---------------------------------------------------------------------------
+
+def _find_pose_config(size: str):
+    import sapiens.pose as _pose  # type: ignore
+    pose_root = Path(_pose.__file__).parent
+    cfg_file = (
+        pose_root
+        / "configs"
+        / "keypoints308"
+        / f"sapiens2_{size}_keypoints308-1024x768.py"
+    )
+    if cfg_file.exists():
+        return cfg_file, pose_root
+    # fallback search
+    candidates = sorted(
+        (pose_root / "configs").rglob(f"*{size}*keypoints308*.py")
+    )
+    if not candidates:
+        raise FileNotFoundError(
+            f"Pose config not found for size={size} under {pose_root}"
+        )
+    return candidates[0], pose_root
+
 
 @tool
 def sapiens_pose(
@@ -367,6 +528,14 @@ def sapiens_pose(
 
     Top-down: uses RTMDet person detector checkpoint at
     ``$SAPIENS_CHECKPOINT_ROOT/detector/rtmdet_m.pth``.
+
+    This wrapper tries three integration paths, in order:
+
+    1.  ``sapiens.pose.inference.inferencer`` / high-level inference API
+    2.  ``sapiens.pose.models.init_pose_model`` + ``PoseVisualizer``
+        (best-effort; ctor kwargs forwarded only if supported)
+    3.  Fallback: return an error telling the user how to run the upstream
+        CLI script directly.
 
     Args:
         input_path:       image file OR directory.
@@ -390,32 +559,75 @@ def sapiens_pose(
                 "huggingface.co/facebook/sapiens-pose-bbox-detector"
             )
 
-        import cv2, json, numpy as np, torch  # type: ignore
-        import sapiens.pose as _pose  # type: ignore
+        import json
 
-        pose_root = Path(_pose.__file__).parent
-        cfg_file = (
-            pose_root
-            / "configs"
-            / "keypoints308"
-            / f"sapiens2_{size}_keypoints308-1024x768.py"
-        )
-        if not cfg_file.exists():
-            # fallback search
-            candidates = list((pose_root / "configs").rglob(f"*{size}*keypoints308*.py"))
-            if not candidates:
-                return err(f"Pose config not found for size={size} under {pose_root}")
-            cfg_file = candidates[0]
+        import cv2  # type: ignore
 
-        # Prefer upstream high-level API if exposed; otherwise fall back to script call.
         try:
+            cfg_file, _pose_root = _find_pose_config(size)
+        except FileNotFoundError as e:
+            return err(str(e))
+
+        # --- Try high-level inferencer API ---------------------------------
+        try:
+            from sapiens.pose.inference import Inferencer  # type: ignore
+            inferencer = Inferencer(
+                config=str(cfg_file),
+                checkpoint=str(ckpt),
+                detector_checkpoint=str(detector_ckpt),
+                device=device,
+            )
+            in_dir, images = resolve_input(input_path)
+            out_dir = ensure_output(output_dir)
+            outputs = []
+            for img_path in images:
+                result = inferencer.infer(str(img_path))
+                vis = inferencer.visualize(
+                    str(img_path),
+                    result,
+                    kpt_thres=kpt_thres,
+                    line_thickness=line_thickness,
+                    radius=radius,
+                )
+                out_img = out_dir / img_path.name
+                cv2.imwrite(str(out_img), vis)
+                out_json = out_dir / f"{img_path.stem}.json"
+                out_json.write_text(json.dumps(result, default=str))
+                outputs.append({
+                    "input": str(img_path),
+                    "vis": str(out_img),
+                    "kpts": str(out_json),
+                })
+            return ok(
+                f"pose complete on {len(outputs)} image(s)",
+                task="pose",
+                model_size=size,
+                outputs=outputs,
+                api="sapiens.pose.inference.Inferencer",
+            )
+        except ImportError:
+            pass
+
+        # --- Try init_pose_model + PoseVisualizer --------------------------
+        try:
+            import inspect
+
             from sapiens.pose.models import init_pose_model  # type: ignore
             from sapiens.pose.visualizers import PoseVisualizer  # type: ignore
 
             model = init_pose_model(str(cfg_file), str(ckpt), device=device)
-            vis = PoseVisualizer(
-                kpt_thres=kpt_thres, line_thickness=line_thickness, radius=radius
-            )
+
+            # Only pass visualizer kwargs that its ctor actually accepts.
+            sig = inspect.signature(PoseVisualizer)
+            vis_kwargs = {
+                k: v for k, v in {
+                    "kpt_thres": kpt_thres,
+                    "line_thickness": line_thickness,
+                    "radius": radius,
+                }.items() if k in sig.parameters
+            }
+            vis = PoseVisualizer(**vis_kwargs)
+
             in_dir, images = resolve_input(input_path)
             out_dir = ensure_output(output_dir)
             outputs = []
@@ -424,25 +636,47 @@ def sapiens_pose(
                 if image is None:
                     outputs.append({"input": str(img_path), "status": "skipped"})
                     continue
-                result = model.infer(image, detector_checkpoint=str(detector_ckpt))
-                vis_img = vis.draw(image, result)
+                # Different sapiens versions expose different infer signatures.
+                try:
+                    result = model.infer(image, detector_checkpoint=str(detector_ckpt))
+                except TypeError:
+                    result = model.infer(image)  # type: ignore[call-arg]
+
+                if hasattr(vis, "draw"):
+                    vis_img = vis.draw(image, result)
+                elif hasattr(vis, "visualize"):
+                    vis_img = vis.visualize(image, result)
+                else:
+                    vis_img = image  # give up on vis, still save JSON
+
                 out_img = out_dir / img_path.name
                 cv2.imwrite(str(out_img), vis_img)
                 out_json = out_dir / f"{img_path.stem}.json"
                 out_json.write_text(json.dumps(result, default=str))
-                outputs.append({"input": str(img_path), "vis": str(out_img), "kpts": str(out_json)})
+                outputs.append({
+                    "input": str(img_path),
+                    "vis": str(out_img),
+                    "kpts": str(out_json),
+                })
             return ok(
                 f"pose complete on {len(outputs)} image(s)",
                 task="pose",
                 model_size=size,
                 outputs=outputs,
+                api="sapiens.pose.models.init_pose_model",
             )
         except ImportError:
-            return err(
-                "sapiens.pose high-level API not available in installed version. "
-                "Use the upstream script directly: "
-                f"`cd $SAPIENS_ROOT/sapiens/pose && ./scripts/demo/keypoints308.sh` "
-                f"with CHECKPOINT={ckpt}"
-            )
+            pass
+
+        # --- Fallback: point the user at the upstream script ---------------
+        return err(
+            "sapiens.pose high-level API not available in installed version. "
+            "Run upstream script directly: "
+            f"`cd $SAPIENS_ROOT/sapiens/pose && ./scripts/demo/keypoints308.sh` "
+            f"with CHECKPOINT={ckpt} DETECTOR={detector_ckpt} CONFIG={cfg_file}",
+            checkpoint=str(ckpt),
+            detector=str(detector_ckpt),
+            config=str(cfg_file),
+        )
     except Exception as e:  # noqa: BLE001
         return err(f"sapiens_pose failed: {e}", traceback=traceback.format_exc())

@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name            = "strands-sapiens"
-version         = "0.1.0"
+version         = "0.1.1"
 description     = "Strands @tool wrappers for Meta Sapiens2 — high-res human-centric vision (seg, normal, pose, pointmap, pretrain backbone)"
 readme          = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 authors         = [{ name = "cagataycali" }]
 license         = { text = "Proprietary" }
 
@@ -30,3 +30,15 @@ dev       = ["pytest", "ruff"]
 [tool.setuptools.packages.find]
 where   = ["."]
 include = ["strands_sapiens*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # covered by formatter
