@@ -1,35 +1,91 @@
-name: Publish to PyPI
+name: Auto Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install -e ".[dev]"
-      - run: pytest -q
+permissions:
+  contents: write
+  packages: write
+  id-token: write
 
-  publish:
-    needs: test
+jobs:
+  auto-release:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install build twine
-      - run: python -m build
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: twine upload dist/*
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+
+    - name: Sync pyproject.toml version with tag
+      run: |
+        VERSION="${{ steps.get_version.outputs.version }}"
+        python - <<PY
+        import re, pathlib
+        p = pathlib.Path("pyproject.toml")
+        s = p.read_text()
+        s = re.sub(r'^version\s*=\s*"[^"]+"', f'version = "${VERSION}"', s, count=1, flags=re.M)
+        p.write_text(s)
+        print(s.splitlines()[:10])
+        PY
+
+    - name: Build package
+      run: python -m build
+
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload dist/*
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: strands-sapiens v${{ steps.get_version.outputs.version }}
+        body: |
+          ## 🧬 strands-sapiens v${{ steps.get_version.outputs.version }}
+
+          ### 📦 Installation
+          ```bash
+          pip install strands-sapiens==${{ steps.get_version.outputs.version }}
+          ```
+
+          ### 🔄 Upgrade
+          ```bash
+          pip install --upgrade strands-sapiens
+          ```
+
+          **Full Changelog**: https://github.com/cagataycali/strands-sapiens/releases
+        draft: false
+        prerelease: false
+
+    - name: Summary
+      run: |
+        echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version:** v${{ steps.get_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **PyPI:** https://pypi.org/project/strands-sapiens/${{ steps.get_version.outputs.version }}/" >> $GITHUB_STEP_SUMMARY
+        echo "- **GitHub Release:** https://github.com/cagataycali/strands-sapiens/releases/tag/v${{ steps.get_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
