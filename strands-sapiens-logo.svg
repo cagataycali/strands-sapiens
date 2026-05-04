@@ -1,0 +1,199 @@
+<svg width="290" height="463" viewBox="0 0 290 463" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Main Sapiens strand: warm human / skin-tone gradient -->
+    <linearGradient id="sapiensStrand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#F97316"/>
+      <stop offset="50%"  stop-color="#FB923C"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+
+    <!-- Meta-blue neural strand -->
+    <linearGradient id="neuralStrand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#0866FF"/>
+      <stop offset="50%"  stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#0866FF"/>
+    </linearGradient>
+
+    <!-- Segmentation palette heatmap (for body parts) -->
+    <linearGradient id="segPalette" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#F472B6"/>
+      <stop offset="25%"  stop-color="#F59E0B"/>
+      <stop offset="50%"  stop-color="#10B981"/>
+      <stop offset="75%"  stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+
+    <!-- Aura glows -->
+    <radialGradient id="auraWarm" cx="50%" cy="50%">
+      <stop offset="0%"   stop-color="#FB923C" stop-opacity="0.5"/>
+      <stop offset="60%"  stop-color="#F97316" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#F97316" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="auraBlue" cx="50%" cy="50%">
+      <stop offset="0%"   stop-color="#60A5FA" stop-opacity="0.45"/>
+      <stop offset="60%"  stop-color="#0866FF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0866FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="auraPink" cx="50%" cy="50%">
+      <stop offset="0%"   stop-color="#F472B6" stop-opacity="0.45"/>
+      <stop offset="60%"  stop-color="#EC4899" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#EC4899" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Keypoint / joint glow -->
+    <radialGradient id="kptGlow" cx="50%" cy="50%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="35%"  stop-color="#FEF3C7" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Iris gradient (the "vision" focal point) -->
+    <radialGradient id="iris" cx="45%" cy="40%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="18%"  stop-color="#FDE68A"/>
+      <stop offset="45%"  stop-color="#F97316"/>
+      <stop offset="78%"  stop-color="#9A3412"/>
+      <stop offset="100%" stop-color="#431407"/>
+    </radialGradient>
+
+    <!-- Soft filter for halo -->
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+
+  <!-- =================================================================== -->
+  <!-- Background nebula aura (warm + cool to evoke human skin + neural)   -->
+  <!-- =================================================================== -->
+  <circle cx="100" cy="120" r="120" fill="url(#auraWarm)"/>
+  <circle cx="200" cy="330" r="140" fill="url(#auraBlue)"/>
+  <circle cx="230" cy="90"  r="80"  fill="url(#auraPink)"/>
+
+  <!-- =================================================================== -->
+  <!-- Two intertwined strands - the "Strands" signature                    -->
+  <!-- Sapiens strand (warm) weaves left-to-right-to-left                   -->
+  <!-- Neural strand (blue) weaves opposite phase                           -->
+  <!-- =================================================================== -->
+  <!-- Sapiens strand -->
+  <path d="M 60 40
+           C 60 110, 230 160, 230 230
+           C 230 300, 60 350, 60 420"
+        stroke="url(#sapiensStrand)" stroke-width="10" fill="none"
+        stroke-linecap="round" opacity="0.95"/>
+  <!-- Sapiens strand glow -->
+  <path d="M 60 40
+           C 60 110, 230 160, 230 230
+           C 230 300, 60 350, 60 420"
+        stroke="url(#sapiensStrand)" stroke-width="22" fill="none"
+        stroke-linecap="round" opacity="0.18" filter="url(#soft)"/>
+
+  <!-- Neural strand (opposite phase) -->
+  <path d="M 230 40
+           C 230 110, 60 160, 60 230
+           C 60 300, 230 350, 230 420"
+        stroke="url(#neuralStrand)" stroke-width="10" fill="none"
+        stroke-linecap="round" opacity="0.95"/>
+  <path d="M 230 40
+           C 230 110, 60 160, 60 230
+           C 60 300, 230 350, 230 420"
+        stroke="url(#neuralStrand)" stroke-width="22" fill="none"
+        stroke-linecap="round" opacity="0.18" filter="url(#soft)"/>
+
+  <!-- =================================================================== -->
+  <!-- Human silhouette (stylized, sitting in the crossing of the strands) -->
+  <!-- Proportions tuned to Sapiens2's 1024x768 aspect awareness           -->
+  <!-- =================================================================== -->
+  <g transform="translate(145 232)">
+    <!-- Soft backdrop disk behind the figure (reads as the 'focus frame') -->
+    <circle r="82" fill="#0F172A" opacity="0.55"/>
+    <circle r="82" fill="none" stroke="url(#segPalette)" stroke-width="1.5" opacity="0.7"/>
+
+    <!-- Head -->
+    <circle cx="0" cy="-42" r="16" fill="url(#sapiensStrand)"/>
+    <!-- Neck -->
+    <rect x="-4" y="-28" width="8" height="10" fill="url(#sapiensStrand)"/>
+    <!-- Torso (slight taper) -->
+    <path d="M -22 -18 L 22 -18 L 18 28 L -18 28 Z"
+          fill="url(#sapiensStrand)"/>
+    <!-- Left arm -->
+    <path d="M -22 -14 L -34 12 L -28 16 L -16 -10 Z"
+          fill="url(#sapiensStrand)"/>
+    <!-- Right arm -->
+    <path d="M 22 -14 L 34 12 L 28 16 L 16 -10 Z"
+          fill="url(#sapiensStrand)"/>
+    <!-- Hips -->
+    <rect x="-18" y="26" width="36" height="6" fill="url(#sapiensStrand)"/>
+    <!-- Left leg -->
+    <path d="M -16 32 L -20 62 L -12 62 L -8 32 Z"
+          fill="url(#sapiensStrand)"/>
+    <!-- Right leg -->
+    <path d="M 16 32 L 20 62 L 12 62 L 8 32 Z"
+          fill="url(#sapiensStrand)"/>
+
+    <!-- Segmentation heat-stripe overlay (the Sapiens "understanding") -->
+    <g opacity="0.7">
+      <rect x="-22" y="-18" width="44" height="5"  fill="#F472B6"/>
+      <rect x="-22" y="-9"  width="44" height="5"  fill="#F59E0B"/>
+      <rect x="-22" y="0"   width="44" height="5"  fill="#10B981"/>
+      <rect x="-22" y="9"   width="44" height="5"  fill="#06B6D4"/>
+      <rect x="-22" y="18"  width="44" height="10" fill="#6366F1"/>
+    </g>
+
+    <!-- 308-keypoint hint: a scatter of glowing dots on face + body -->
+    <!-- Face keypoints -->
+    <circle cx="-5"  cy="-46" r="1.4" fill="url(#kptGlow)"/>
+    <circle cx="5"   cy="-46" r="1.4" fill="url(#kptGlow)"/>
+    <circle cx="-7"  cy="-42" r="1.4" fill="url(#kptGlow)"/>
+    <circle cx="7"   cy="-42" r="1.4" fill="url(#kptGlow)"/>
+    <circle cx="0"   cy="-38" r="1.4" fill="url(#kptGlow)"/>
+    <circle cx="-3"  cy="-34" r="1.4" fill="url(#kptGlow)"/>
+    <circle cx="3"   cy="-34" r="1.4" fill="url(#kptGlow)"/>
+    <!-- Body joints -->
+    <circle cx="-22" cy="-18" r="2" fill="url(#kptGlow)"/>
+    <circle cx="22"  cy="-18" r="2" fill="url(#kptGlow)"/>
+    <circle cx="-34" cy="12"  r="2" fill="url(#kptGlow)"/>
+    <circle cx="34"  cy="12"  r="2" fill="url(#kptGlow)"/>
+    <circle cx="-18" cy="28"  r="2" fill="url(#kptGlow)"/>
+    <circle cx="18"  cy="28"  r="2" fill="url(#kptGlow)"/>
+    <circle cx="-16" cy="62"  r="2" fill="url(#kptGlow)"/>
+    <circle cx="16"  cy="62"  r="2" fill="url(#kptGlow)"/>
+    <circle cx="0"   cy="-22" r="2" fill="url(#kptGlow)"/>
+    <circle cx="0"   cy="2"   r="2" fill="url(#kptGlow)"/>
+
+    <!-- Skeleton connection lines (subtle) -->
+    <g stroke="#FFFFFF" stroke-width="0.8" opacity="0.45" fill="none">
+      <line x1="-22" y1="-18" x2="22"  y2="-18"/>
+      <line x1="-22" y1="-18" x2="-34" y2="12"/>
+      <line x1="22"  y1="-18" x2="34"  y2="12"/>
+      <line x1="0"   y1="-22" x2="0"   y2="2"/>
+      <line x1="0"   y1="2"   x2="-18" y2="28"/>
+      <line x1="0"   y1="2"   x2="18"  y2="28"/>
+      <line x1="-18" y1="28"  x2="-16" y2="62"/>
+      <line x1="18"  y1="28"  x2="16"  y2="62"/>
+    </g>
+
+    <!-- The Iris - vision / attention focal point over the head -->
+    <circle cx="0" cy="-42" r="7"   fill="url(#iris)"/>
+    <circle cx="0" cy="-42" r="2.5" fill="#0B0F19"/>
+    <circle cx="1" cy="-43" r="0.8" fill="#FFFFFF"/>
+  </g>
+
+  <!-- =================================================================== -->
+  <!-- Floating particles (attention tokens drifting off the strands)      -->
+  <!-- =================================================================== -->
+  <circle cx="90"  cy="90"  r="2.2" fill="#FFFFFF" opacity="0.9"/>
+  <circle cx="200" cy="60"  r="1.6" fill="#FCD34D" opacity="0.9"/>
+  <circle cx="250" cy="150" r="2.0" fill="#60A5FA" opacity="0.9"/>
+  <circle cx="40"  cy="200" r="1.8" fill="#F472B6" opacity="0.9"/>
+  <circle cx="265" cy="270" r="2.2" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="30"  cy="320" r="1.6" fill="#FB923C" opacity="0.9"/>
+  <circle cx="210" cy="400" r="2.0" fill="#A78BFA" opacity="0.9"/>
+  <circle cx="85"  cy="430" r="1.4" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="150" cy="30"  r="1.6" fill="#FFFFFF" opacity="0.75"/>
+  <circle cx="150" cy="445" r="1.6" fill="#FFFFFF" opacity="0.75"/>
+
+  <!-- =================================================================== -->
+  <!-- Bottom wordmark accent - subtle gradient bar                         -->
+  <!-- =================================================================== -->
+  <rect x="60" y="454" width="170" height="2" rx="1" fill="url(#segPalette)" opacity="0.7"/>
+</svg>

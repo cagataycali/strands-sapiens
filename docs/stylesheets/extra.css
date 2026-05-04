@@ -1,0 +1,238 @@
+/* Strands Sapiens — clean, light documentation theme */
+
+/* ============================================= */
+/* Light mode                                    */
+/* ============================================= */
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #1a1a1a;
+    --md-primary-bg-color: #ffffff;
+    --md-accent-fg-color: #EA580C;
+    --md-default-bg-color: #ffffff;
+    --md-default-fg-color: #1a1a1a;
+    --md-default-fg-color--light: #52525B;
+    --md-default-fg-color--lighter: #71717A;
+    --md-default-fg-color--lightest: #A1A1AA;
+    --md-typeset-a-color: #C2410C;
+    --md-code-bg-color: #F4F4F5;
+    --md-code-fg-color: #3F3F46;
+}
+
+/* ============================================= */
+/* Dark mode                                     */
+/* ============================================= */
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color: #F5F5F5;
+    --md-primary-bg-color: #0A0A0A;
+    --md-accent-fg-color: #FB923C;
+    --md-default-bg-color: #0A0A0A;
+    --md-default-fg-color: #E5E5E5;
+    --md-default-fg-color--light: #A1A1AA;
+    --md-default-fg-color--lighter: #71717A;
+    --md-default-fg-color--lightest: #3F3F46;
+    --md-typeset-a-color: #FB923C;
+    --md-code-bg-color: #18181B;
+    --md-code-fg-color: #D4D4D8;
+}
+
+/* ============================================= */
+/* Typography                                    */
+/* ============================================= */
+body, .md-typeset {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                 "Inter", "Segoe UI", Roboto, sans-serif;
+}
+
+.md-typeset h1 { font-weight: 800; letter-spacing: -0.03em; }
+.md-typeset h2 { font-weight: 700; letter-spacing: -0.02em; }
+.md-typeset h3 { font-weight: 700; }
+
+/* Gradient heading only for h1 */
+.md-typeset h1 {
+    background: linear-gradient(135deg, #EA580C 0%, #EC4899 50%, #2563EB 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ============================================= */
+/* Header — clean, solid background              */
+/* ============================================= */
+.md-header {
+    background: var(--md-primary-bg-color);
+    border-bottom: 1px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+[data-md-color-scheme="slate"] .md-header {
+    border-bottom-color: #27272A;
+}
+
+.md-header__title { font-weight: 700; }
+
+/* ============================================= */
+/* Code blocks                                   */
+/* ============================================= */
+.md-typeset pre > code,
+.md-typeset .highlight pre {
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+}
+[data-md-color-scheme="slate"] .md-typeset pre > code,
+[data-md-color-scheme="slate"] .md-typeset .highlight pre {
+    border-color: #27272A;
+}
+
+.md-typeset code {
+    background-color: rgba(249, 115, 22, 0.07);
+    color: var(--md-accent-fg-color);
+    border-radius: 4px;
+    padding: 0.1em 0.3em;
+    font-size: 0.86em;
+}
+
+/* ============================================= */
+/* Admonitions                                   */
+/* ============================================= */
+.md-typeset .admonition {
+    border-radius: 10px;
+    border-left-width: 3px;
+}
+
+/* ============================================= */
+/* Cards — clean with subtle border              */
+/* ============================================= */
+.md-typeset .grid.cards > ol > li,
+.md-typeset .grid.cards > ul > li {
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    background: var(--md-default-bg-color);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ol > li,
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
+    border-color: #27272A;
+}
+
+.md-typeset .grid.cards > ol > li:hover,
+.md-typeset .grid.cards > ul > li:hover {
+    transform: translateY(-2px);
+    border-color: #EA580C;
+    box-shadow: 0 6px 20px -6px rgba(234, 88, 12, 0.2);
+}
+
+/* ============================================= */
+/* Tables                                        */
+/* ============================================= */
+.md-typeset table:not([class]) {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #E5E7EB;
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+    border-color: #27272A;
+}
+
+.md-typeset table:not([class]) th {
+    background: #F9FAFB;
+    font-weight: 700;
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+    background: #18181B;
+}
+
+/* ============================================= */
+/* Buttons                                       */
+/* ============================================= */
+.md-typeset .md-button {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+.md-typeset .md-button--primary {
+    background: linear-gradient(135deg, #EA580C, #EC4899);
+    border: none;
+    color: white;
+}
+
+.md-typeset .md-button--primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+/* ============================================= */
+/* Sidebar                                       */
+/* ============================================= */
+.md-nav__link--active {
+    color: var(--md-accent-fg-color) !important;
+    font-weight: 600;
+}
+
+/* ============================================= */
+/* Footer                                        */
+/* ============================================= */
+.md-footer {
+    background: #F9FAFB;
+    border-top: 1px solid #E5E7EB;
+}
+[data-md-color-scheme="slate"] .md-footer {
+    background: #0A0A0A;
+    border-top-color: #27272A;
+}
+
+/* ============================================= */
+/* Figures / images — proper spacing             */
+/* ============================================= */
+.md-typeset figure {
+    margin: 1.5rem 0;
+}
+
+.md-typeset figcaption {
+    font-size: 0.85rem;
+    color: var(--md-default-fg-color--lighter);
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+/* SVG diagrams — ensure they render large */
+.md-typeset figure img[src$=".svg"] {
+    max-width: 100%;
+    height: auto;
+    min-height: 200px;
+}
+
+/* ============================================= */
+/* Home page hero                                */
+/* ============================================= */
+.ss-hero {
+    text-align: center;
+    padding: 2rem 0 1rem;
+}
+.ss-hero img {
+    width: 160px;
+    height: auto;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 6px 16px rgba(234, 88, 12, 0.2));
+}
+.ss-hero h1 {
+    margin-top: 0;
+    font-size: 2.8rem;
+}
+.ss-hero .ss-sub {
+    font-size: 1.15rem;
+    color: var(--md-default-fg-color--light);
+    font-weight: 500;
+    margin-top: -0.5rem;
+}
+
+/* ============================================= */
+/* Scrollbar                                     */
+/* ============================================= */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: #D4D4D8;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #EA580C;
+}

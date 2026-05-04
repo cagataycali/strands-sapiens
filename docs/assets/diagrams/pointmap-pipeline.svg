@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="-apple-system,BlinkMacSystemFont,SF Pro Display,Inter,sans-serif">
+  <defs>
+    <linearGradient id="turbo" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#30123B"/>
+      <stop offset="20%" style="stop-color:#4662D7"/>
+      <stop offset="40%" style="stop-color:#35B779"/>
+      <stop offset="60%" style="stop-color:#B8D430"/>
+      <stop offset="80%" style="stop-color:#FCA510"/>
+      <stop offset="100%" style="stop-color:#7A0403"/>
+    </linearGradient>
+    <filter id="s1"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/></filter>
+  </defs>
+  
+  <rect width="960" height="340" rx="20" fill="white" stroke="#E5E7EB" stroke-width="1.5"/>
+
+  <!-- Input -->
+  <g filter="url(#s1)">
+    <rect x="30" y="35" width="200" height="260" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="30" y="35" width="200" height="44" rx="16" fill="#ECFEFF"/>
+    <text x="130" y="63" text-anchor="middle" font-size="16" font-weight="700" fill="#0891B2">📷 2D IMAGE</text>
+    <circle cx="130" cy="135" r="28" fill="#E5E7EB"/>
+    <rect x="102" y="170" width="56" height="66" rx="10" fill="#E5E7EB"/>
+    <text x="130" y="272" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">single RGB photo</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="245" y1="170" x2="320" y2="170" stroke="#06B6D4" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="318,160 336,170 318,180" fill="#06B6D4"/>
+
+  <!-- Model -->
+  <g filter="url(#s1)">
+    <rect x="345" y="50" width="240" height="230" rx="16" fill="white" stroke="#A5F3FC" stroke-width="1.5"/>
+    <rect x="345" y="50" width="240" height="44" rx="16" fill="#ECFEFF"/>
+    <text x="465" y="78" text-anchor="middle" font-size="16" font-weight="800" fill="#0891B2">🌌 sapiens_pointmap</text>
+    <text x="465" y="118" text-anchor="middle" font-size="15" fill="#52525B">Each pixel → (X, Y, Z)</text>
+    <text x="465" y="142" text-anchor="middle" font-size="15" fill="#52525B">in camera space</text>
+    <!-- 3D axes -->
+    <line x1="430" y1="225" x2="430" y2="180" stroke="#EF4444" stroke-width="3"/>
+    <text x="422" y="175" font-size="16" fill="#EF4444" font-weight="700">Y</text>
+    <line x1="430" y1="225" x2="490" y2="225" stroke="#22C55E" stroke-width="3"/>
+    <text x="495" y="230" font-size="16" fill="#22C55E" font-weight="700">X</text>
+    <line x1="430" y1="225" x2="460" y2="255" stroke="#3B82F6" stroke-width="3"/>
+    <text x="465" y="267" font-size="16" fill="#3B82F6" font-weight="700">Z</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="600" y1="170" x2="670" y2="170" stroke="#8B5CF6" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="668,160 686,170 668,180" fill="#8B5CF6"/>
+
+  <!-- Output -->
+  <g filter="url(#s1)">
+    <rect x="695" y="35" width="240" height="260" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="695" y="35" width="240" height="44" rx="16" fill="#F5F3FF"/>
+    <text x="815" y="63" text-anchor="middle" font-size="16" font-weight="700" fill="#7C3AED">🗺️ 3D OUTPUT</text>
+    <!-- Turbo depth -->
+    <rect x="715" y="95" width="90" height="140" rx="8" fill="url(#turbo)" opacity="0.8"/>
+    <text x="760" y="255" text-anchor="middle" font-size="13" fill="#71717A">depth viz</text>
+    <!-- 3D dots -->
+    <circle cx="860" cy="115" r="5" fill="#4662D7"/>
+    <circle cx="875" cy="130" r="5" fill="#35B779"/>
+    <circle cx="850" cy="145" r="6" fill="#B8D430"/>
+    <circle cx="870" cy="160" r="5" fill="#FCA510"/>
+    <circle cx="855" cy="175" r="5" fill="#35B779"/>
+    <circle cx="880" cy="190" r="6" fill="#4662D7"/>
+    <circle cx="845" cy="200" r="5" fill="#B8D430"/>
+    <text x="862" y="255" text-anchor="middle" font-size="13" fill="#71717A">3D cloud</text>
+    <text x="815" y="278" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">pointmap.npy (X,Y,Z)</text>
+  </g>
+</svg>

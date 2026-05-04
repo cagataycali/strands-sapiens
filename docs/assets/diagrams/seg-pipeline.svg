@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="-apple-system,BlinkMacSystemFont,SF Pro Display,Inter,sans-serif">
+  <defs>
+    <filter id="s1">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  
+  <rect width="960" height="340" rx="20" fill="white" stroke="#E5E7EB" stroke-width="1.5"/>
+
+  <!-- Input -->
+  <g filter="url(#s1)">
+    <rect x="30" y="35" width="200" height="260" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="30" y="35" width="200" height="44" rx="16" fill="#FFF7ED"/>
+    <text x="130" y="63" text-anchor="middle" font-size="16" font-weight="700" fill="#EA580C">📷 INPUT</text>
+    <circle cx="130" cy="130" r="28" fill="#E5E7EB"/>
+    <rect x="102" y="164" width="56" height="68" rx="10" fill="#E5E7EB"/>
+    <rect x="84" y="170" width="18" height="46" rx="6" fill="#E5E7EB"/>
+    <rect x="158" y="170" width="18" height="46" rx="6" fill="#E5E7EB"/>
+    <text x="130" y="270" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">person.jpg</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <line x1="245" y1="170" x2="320" y2="170" stroke="#F97316" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="318,160 336,170 318,180" fill="#F97316"/>
+
+  <!-- Model -->
+  <g filter="url(#s1)">
+    <rect x="345" y="50" width="240" height="230" rx="16" fill="white" stroke="#FDBA74" stroke-width="1.5"/>
+    <rect x="345" y="50" width="240" height="44" rx="16" fill="#FFF7ED"/>
+    <text x="465" y="78" text-anchor="middle" font-size="16" font-weight="800" fill="#EA580C">🧩 sapiens_seg</text>
+    <text x="465" y="115" text-anchor="middle" font-size="15" fill="#52525B">Sapiens2 0.4B ViT</text>
+    <text x="465" y="140" text-anchor="middle" font-size="15" fill="#52525B">1024 × 768 input</text>
+    <text x="465" y="180" text-anchor="middle" font-size="28">⚡</text>
+    <text x="465" y="215" text-anchor="middle" font-size="14" fill="#A1A1AA" font-weight="500">~100 ms on 4090</text>
+    <text x="465" y="240" text-anchor="middle" font-size="14" fill="#A1A1AA" font-weight="500">29-class segmentation</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <line x1="600" y1="170" x2="670" y2="170" stroke="#F472B6" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="668,160 686,170 668,180" fill="#F472B6"/>
+
+  <!-- Output -->
+  <g filter="url(#s1)">
+    <rect x="695" y="35" width="240" height="260" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="695" y="35" width="240" height="44" rx="16" fill="#EFF6FF"/>
+    <text x="815" y="63" text-anchor="middle" font-size="16" font-weight="700" fill="#2563EB">🎨 OUTPUT</text>
+    <!-- Color-coded body parts -->
+    <circle cx="775" cy="130" r="28" fill="#FF6B6B"/>
+    <rect x="747" y="164" width="56" height="68" rx="10" fill="#4ECDC4"/>
+    <rect x="729" y="170" width="18" height="46" rx="6" fill="#45B7D1"/>
+    <rect x="803" y="170" width="18" height="46" rx="6" fill="#96CEB4"/>
+    <!-- Legend -->
+    <rect x="840" y="105" width="16" height="16" rx="4" fill="#FF6B6B"/>
+    <text x="862" y="118" font-size="14" fill="#52525B" font-weight="500">head</text>
+    <rect x="840" y="130" width="16" height="16" rx="4" fill="#4ECDC4"/>
+    <text x="862" y="143" font-size="14" fill="#52525B" font-weight="500">torso</text>
+    <rect x="840" y="155" width="16" height="16" rx="4" fill="#45B7D1"/>
+    <text x="862" y="168" font-size="14" fill="#52525B" font-weight="500">arms</text>
+    <rect x="840" y="180" width="16" height="16" rx="4" fill="#FFEAA7"/>
+    <text x="862" y="193" font-size="14" fill="#52525B" font-weight="500">legs</text>
+    <text x="815" y="278" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">vis.jpg + labels.npy</text>
+  </g>
+</svg>

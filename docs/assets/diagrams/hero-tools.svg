@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" font-family="-apple-system,BlinkMacSystemFont,SF Pro Display,Inter,sans-serif">
+  <defs>
+    <filter id="h1">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  
+  <!-- Seg -->
+  <g filter="url(#h1)">
+    <rect x="5" y="10" width="150" height="220" rx="14" fill="white" stroke="#F97316" stroke-width="2"/>
+    <text x="80" y="50" text-anchor="middle" font-size="36">🧩</text>
+    <text x="80" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="#1A1A1A">Segmentation</text>
+    <text x="80" y="98" text-anchor="middle" font-size="13" fill="#71717A">29-class body parts</text>
+    <circle cx="80" cy="138" r="16" fill="#FF6B6B" opacity="0.7"/>
+    <rect x="67" y="158" width="26" height="32" rx="4" fill="#4ECDC4" opacity="0.7"/>
+    <text x="80" y="214" text-anchor="middle" font-size="13" fill="#A1A1AA" font-weight="500">0.4b – 5b</text>
+  </g>
+  
+  <!-- Normal -->
+  <g filter="url(#h1)">
+    <rect x="165" y="10" width="150" height="220" rx="14" fill="white" stroke="#8B5CF6" stroke-width="2"/>
+    <text x="240" y="50" text-anchor="middle" font-size="36">🧭</text>
+    <text x="240" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="#1A1A1A">Normals</text>
+    <text x="240" y="98" text-anchor="middle" font-size="13" fill="#71717A">Surface orientation</text>
+    <rect x="210" y="118" width="60" height="70" rx="6">
+      <animate attributeName="fill" values="#8080FF;#80FF80;#FF8080;#8080FF" dur="4s" repeatCount="indefinite"/>
+    </rect>
+    <text x="240" y="214" text-anchor="middle" font-size="13" fill="#A1A1AA" font-weight="500">per-pixel (x,y,z)</text>
+  </g>
+  
+  <!-- Albedo -->
+  <g filter="url(#h1)">
+    <rect x="325" y="10" width="150" height="220" rx="14" fill="white" stroke="#F59E0B" stroke-width="2"/>
+    <text x="400" y="50" text-anchor="middle" font-size="36">🎨</text>
+    <text x="400" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="#1A1A1A">Albedo</text>
+    <text x="400" y="98" text-anchor="middle" font-size="13" fill="#71717A">Intrinsic color</text>
+    <circle cx="400" cy="146" r="18" fill="#DEB887" stroke="#D2B48C"/>
+    <rect x="383" y="168" width="34" height="24" rx="5" fill="#9B59B6"/>
+    <text x="400" y="214" text-anchor="middle" font-size="13" fill="#A1A1AA" font-weight="500">no shadows</text>
+  </g>
+  
+  <!-- Pointmap -->
+  <g filter="url(#h1)">
+    <rect x="485" y="10" width="150" height="220" rx="14" fill="white" stroke="#06B6D4" stroke-width="2"/>
+    <text x="560" y="50" text-anchor="middle" font-size="36">🌌</text>
+    <text x="560" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="#1A1A1A">Pointmap</text>
+    <text x="560" y="98" text-anchor="middle" font-size="13" fill="#71717A">Per-pixel 3D</text>
+    <circle cx="536" cy="130" r="5" fill="#4662D7"/>
+    <circle cx="552" cy="142" r="5" fill="#35B779"/>
+    <circle cx="568" cy="128" r="6" fill="#B8D430"/>
+    <circle cx="584" cy="145" r="5" fill="#FCA510"/>
+    <circle cx="544" cy="158" r="5" fill="#35B779"/>
+    <circle cx="564" cy="170" r="6" fill="#B8D430"/>
+    <circle cx="580" cy="160" r="5" fill="#4662D7"/>
+    <text x="560" y="214" text-anchor="middle" font-size="13" fill="#A1A1AA" font-weight="500">(X, Y, Z) cloud</text>
+  </g>
+  
+  <!-- Pose -->
+  <g filter="url(#h1)">
+    <rect x="645" y="10" width="150" height="220" rx="14" fill="white" stroke="#EC4899" stroke-width="2"/>
+    <text x="720" y="50" text-anchor="middle" font-size="36">🦴</text>
+    <text x="720" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="#1A1A1A">Pose</text>
+    <text x="720" y="98" text-anchor="middle" font-size="13" fill="#71717A">308 keypoints</text>
+    <circle cx="720" cy="128" r="10" fill="none" stroke="#EC4899" stroke-width="2.5"/>
+    <line x1="720" y1="138" x2="720" y2="168" stroke="#EC4899" stroke-width="2.5"/>
+    <line x1="720" y1="145" x2="700" y2="162" stroke="#EC4899" stroke-width="2.5"/>
+    <line x1="720" y1="145" x2="740" y2="162" stroke="#EC4899" stroke-width="2.5"/>
+    <line x1="720" y1="168" x2="706" y2="190" stroke="#EC4899" stroke-width="2.5"/>
+    <line x1="720" y1="168" x2="734" y2="190" stroke="#EC4899" stroke-width="2.5"/>
+    <circle cx="700" cy="162" r="3.5" fill="#EC4899"/>
+    <circle cx="740" cy="162" r="3.5" fill="#EC4899"/>
+    <text x="720" y="214" text-anchor="middle" font-size="13" fill="#A1A1AA" font-weight="500">face+body+hands</text>
+  </g>
+  
+  <!-- Backbone -->
+  <g filter="url(#h1)">
+    <rect x="805" y="10" width="150" height="220" rx="14" fill="white" stroke="#22C55E" stroke-width="2"/>
+    <text x="880" y="50" text-anchor="middle" font-size="36">🧠</text>
+    <text x="880" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="#1A1A1A">Backbone</text>
+    <text x="880" y="98" text-anchor="middle" font-size="13" fill="#71717A">Dense features</text>
+    <rect x="847" y="118" width="66" height="66" rx="6" fill="#F0FDF4" stroke="#86EFAC"/>
+    <line x1="847" y1="135" x2="913" y2="135" stroke="#86EFAC"/>
+    <line x1="847" y1="151" x2="913" y2="151" stroke="#86EFAC"/>
+    <line x1="847" y1="167" x2="913" y2="167" stroke="#86EFAC"/>
+    <line x1="869" y1="118" x2="869" y2="184" stroke="#86EFAC"/>
+    <line x1="891" y1="118" x2="891" y2="184" stroke="#86EFAC"/>
+    <text x="880" y="214" text-anchor="middle" font-size="13" fill="#A1A1AA" font-weight="500">RAG / fine-tune</text>
+  </g>
+</svg>

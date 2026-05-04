@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" font-family="-apple-system,BlinkMacSystemFont,SF Pro Display,Inter,sans-serif">
+  <defs>
+    <filter id="s1"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/></filter>
+  </defs>
+  
+  <rect width="960" height="320" rx="20" fill="white" stroke="#E5E7EB" stroke-width="1.5"/>
+  
+  <!-- Equation -->
+  <text x="480" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#71717A">pixel_color ≈ albedo × shading × camera_response</text>
+
+  <!-- Input with lighting -->
+  <g filter="url(#s1)">
+    <rect x="30" y="50" width="200" height="230" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="30" y="50" width="200" height="44" rx="16" fill="#FFFBEB"/>
+    <text x="130" y="78" text-anchor="middle" font-size="16" font-weight="700" fill="#D97706">☀️ LIT PHOTO</text>
+    <circle cx="115" cy="145" r="26" fill="#C4956A"/>
+    <rect x="89" y="176" width="52" height="56" rx="8" fill="#7C3AED" opacity="0.8"/>
+    <circle cx="185" cy="100" r="20" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1.5"/>
+    <text x="185" y="106" text-anchor="middle" font-size="20">☀️</text>
+    <line x1="172" y1="115" x2="142" y2="140" stroke="#FCD34D" stroke-width="1.5" opacity="0.5" stroke-dasharray="4,4"/>
+    <text x="130" y="262" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">shadows + highlights</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="245" y1="165" x2="325" y2="165" stroke="#F59E0B" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="323,155 341,165 323,175" fill="#F59E0B"/>
+
+  <!-- Model -->
+  <g filter="url(#s1)">
+    <rect x="350" y="55" width="240" height="210" rx="16" fill="white" stroke="#FDBA74" stroke-width="1.5"/>
+    <rect x="350" y="55" width="240" height="44" rx="16" fill="#FFFBEB"/>
+    <text x="470" y="83" text-anchor="middle" font-size="16" font-weight="800" fill="#D97706">🎨 sapiens_albedo</text>
+    <text x="470" y="125" text-anchor="middle" font-size="15" fill="#52525B">Factors out illumination</text>
+    <text x="470" y="150" text-anchor="middle" font-size="15" fill="#52525B">→ pure surface color</text>
+    <text x="470" y="195" text-anchor="middle" font-size="28">🔬</text>
+    <text x="470" y="232" text-anchor="middle" font-size="14" fill="#A1A1AA">Intrinsic decomposition</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="605" y1="165" x2="680" y2="165" stroke="#EF4444" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="678,155 696,165 678,175" fill="#EF4444"/>
+
+  <!-- Output -->
+  <g filter="url(#s1)">
+    <rect x="705" y="50" width="230" height="230" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="705" y="50" width="230" height="44" rx="16" fill="#FEF2F2"/>
+    <text x="820" y="78" text-anchor="middle" font-size="16" font-weight="700" fill="#DC2626">✨ ALBEDO</text>
+    <circle cx="785" cy="140" r="26" fill="#DEB887" stroke="#D2B48C" stroke-width="1.5"/>
+    <rect x="759" y="172" width="52" height="56" rx="8" fill="#9B59B6" stroke="#8E44AD" stroke-width="1"/>
+    <text x="870" y="130" font-size="14" fill="#52525B" font-weight="500">✓ No shadows</text>
+    <text x="870" y="152" font-size="14" fill="#52525B" font-weight="500">✓ True color</text>
+    <text x="870" y="174" font-size="14" fill="#52525B" font-weight="500">✓ Relightable</text>
+    <text x="820" y="262" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">albedo.jpg + .npy</text>
+  </g>
+</svg>

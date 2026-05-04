@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="-apple-system,BlinkMacSystemFont,SF Pro Display,Inter,sans-serif">
+  <defs>
+    <linearGradient id="nm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8080FF"/>
+      <stop offset="30%" style="stop-color:#80FF80"/>
+      <stop offset="60%" style="stop-color:#FF8080"/>
+      <stop offset="100%" style="stop-color:#8080FF"/>
+    </linearGradient>
+    <filter id="s1"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/></filter>
+  </defs>
+  
+  <rect width="960" height="340" rx="20" fill="white" stroke="#E5E7EB" stroke-width="1.5"/>
+
+  <!-- Input -->
+  <g filter="url(#s1)">
+    <rect x="30" y="35" width="200" height="260" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="30" y="35" width="200" height="44" rx="16" fill="#F5F3FF"/>
+    <text x="130" y="63" text-anchor="middle" font-size="16" font-weight="700" fill="#7C3AED">📷 RGB INPUT</text>
+    <circle cx="130" cy="135" r="30" fill="#E5E7EB"/>
+    <rect x="100" y="172" width="60" height="70" rx="10" fill="#E5E7EB"/>
+    <text x="130" y="272" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">photo.jpg</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="245" y1="170" x2="320" y2="170" stroke="#8B5CF6" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="318,160 336,170 318,180" fill="#8B5CF6"/>
+
+  <!-- Model -->
+  <g filter="url(#s1)">
+    <rect x="345" y="50" width="240" height="230" rx="16" fill="white" stroke="#C4B5FD" stroke-width="1.5"/>
+    <rect x="345" y="50" width="240" height="44" rx="16" fill="#F5F3FF"/>
+    <text x="465" y="78" text-anchor="middle" font-size="16" font-weight="800" fill="#7C3AED">🧭 sapiens_normal</text>
+    <text x="465" y="118" text-anchor="middle" font-size="15" fill="#52525B">Per-pixel (x, y, z)</text>
+    <text x="465" y="142" text-anchor="middle" font-size="15" fill="#52525B">surface normals</text>
+    <!-- xyz arrows -->
+    <line x1="420" y1="200" x2="420" y2="172" stroke="#FF6B6B" stroke-width="3"/>
+    <line x1="465" y1="200" x2="465" y2="172" stroke="#4ECDC4" stroke-width="3"/>
+    <line x1="510" y1="200" x2="510" y2="172" stroke="#45B7D1" stroke-width="3"/>
+    <text x="420" y="220" text-anchor="middle" font-size="14" fill="#FF6B6B" font-weight="700">x</text>
+    <text x="465" y="220" text-anchor="middle" font-size="14" fill="#4ECDC4" font-weight="700">y</text>
+    <text x="510" y="220" text-anchor="middle" font-size="14" fill="#45B7D1" font-weight="700">z</text>
+    <text x="465" y="254" text-anchor="middle" font-size="13" fill="#A1A1AA">rgb = (n × 0.5 + 0.5) × 255</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="600" y1="170" x2="670" y2="170" stroke="#06B6D4" stroke-width="3" stroke-dasharray="8,4"/>
+  <polygon points="668,160 686,170 668,180" fill="#06B6D4"/>
+
+  <!-- Output -->
+  <g filter="url(#s1)">
+    <rect x="695" y="35" width="240" height="260" rx="16" fill="white" stroke="#D4D4D8"/>
+    <rect x="695" y="35" width="240" height="44" rx="16" fill="#ECFEFF"/>
+    <text x="815" y="63" text-anchor="middle" font-size="16" font-weight="700" fill="#0891B2">🌈 NORMAL MAP</text>
+    <rect x="720" y="95" width="130" height="140" rx="10" fill="url(#nm)" opacity="0.75"/>
+    <circle cx="785" cy="135" r="26" fill="#8080FF" opacity="0.6"/>
+    <rect x="765" y="168" width="40" height="52" rx="8" fill="#80A0FF" opacity="0.6"/>
+    <text x="815" y="272" text-anchor="middle" font-size="14" fill="#71717A" font-weight="500">vis.jpg + normals.npy</text>
+  </g>
+</svg>

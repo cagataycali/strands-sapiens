@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name            = "strands-sapiens"
+version         = "0.1.0"
+description     = "Strands @tool wrappers for Meta Sapiens2 - high-res human-centric vision (seg, normal, pose, pointmap, pretrain backbone)"
+readme          = "README.md"
+requires-python = ">=3.10"
+authors         = [{ name = "cagataycali" }]
+license         = { text = "MIT" }
+keywords        = ["strands", "sapiens", "sapiens2", "human-vision", "segmentation", "pose", "agents", "tools"]
+classifiers     = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Image Recognition",
+]
+dependencies = [
+  "strands-agents",
+  "numpy",
+  "opencv-python",
+  "pillow",
+  "safetensors",
+  "tqdm",
+  # torch / torchvision are expected to be installed separately (CUDA build).
+  # The `sapiens` package (facebookresearch/sapiens2) must also be installed from source.
+]
+
+[project.urls]
+Homepage      = "https://github.com/cagataycali/strands-sapiens"
+Documentation = "https://cagataycali.github.io/strands-sapiens/"
+Repository    = "https://github.com/cagataycali/strands-sapiens"
+Changelog     = "https://github.com/cagataycali/strands-sapiens/blob/main/CHANGELOG.md"
+Issues        = "https://github.com/cagataycali/strands-sapiens/issues"
+
+[project.optional-dependencies]
+sapiens   = ["sapiens @ git+https://github.com/facebookresearch/sapiens2.git"]
+pointmap  = ["open3d"]
+dev       = ["pytest", "ruff"]
+docs      = ["mkdocs-material", "pymdown-extensions"]
+
+[tool.setuptools.packages.find]
+where   = ["."]
+include = ["strands_sapiens*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # covered by formatter
