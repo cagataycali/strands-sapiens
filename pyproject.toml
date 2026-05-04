@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name            = "strands-sapiens"
-version         = "0.1.0"
+version         = "0.1.2"
 description     = "Strands @tool wrappers for Meta Sapiens2 - high-res human-centric vision (seg, normal, pose, pointmap, pretrain backbone)"
 readme          = "README.md"
 requires-python = ">=3.10"
