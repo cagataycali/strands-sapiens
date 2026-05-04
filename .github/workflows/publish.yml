@@ -42,7 +42,7 @@ jobs:
     - name: Sync pyproject.toml version with tag
       run: |
         VERSION="${{ steps.get_version.outputs.version }}"
-        sed -i "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml
+        sed -i "s/^version.*= \".*\"/version         = \"${VERSION}\"/" pyproject.toml
         echo "Updated pyproject.toml:"
         grep "^version" pyproject.toml
 
