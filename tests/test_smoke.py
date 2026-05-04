@@ -6,7 +6,7 @@ import pytest
 
 def test_imports():
     import strands_sapiens as ss
-    assert len(ss.TOOLS) == 7
+    assert len(ss.TOOLS) == 8
     # All tools must be @tool-decorated callables
     for t in ss.TOOLS:
         assert callable(t)
