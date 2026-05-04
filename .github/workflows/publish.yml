@@ -42,14 +42,9 @@ jobs:
     - name: Sync pyproject.toml version with tag
       run: |
         VERSION="${{ steps.get_version.outputs.version }}"
-        python - <<PY
-        import re, pathlib
-        p = pathlib.Path("pyproject.toml")
-        s = p.read_text()
-        s = re.sub(r'^version\s*=\s*"[^"]+"', f'version = "${VERSION}"', s, count=1, flags=re.M)
-        p.write_text(s)
-        print(s.splitlines()[:10])
-        PY
+        sed -i "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml
+        echo "Updated pyproject.toml:"
+        grep "^version" pyproject.toml
 
     - name: Build package
       run: python -m build
