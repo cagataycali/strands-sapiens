@@ -9,13 +9,12 @@ description     = "Strands @tool wrappers for Meta Sapiens2 - high-res human-cen
 readme          = "README.md"
 requires-python = ">=3.10"
 authors         = [{ name = "cagataycali" }]
-license         = { text = "MIT" }
+license         = "MIT"
 keywords        = ["strands", "sapiens", "sapiens2", "human-vision", "segmentation", "pose", "agents", "tools"]
 classifiers     = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -43,7 +42,8 @@ Changelog     = "https://github.com/cagataycali/strands-sapiens/blob/main/CHANGE
 Issues        = "https://github.com/cagataycali/strands-sapiens/issues"
 
 [project.optional-dependencies]
-sapiens   = ["sapiens @ git+https://github.com/facebookresearch/sapiens2.git"]
+# NOTE: sapiens2 must be installed from source - PyPI does not allow direct git URLs.
+#   pip install git+https://github.com/facebookresearch/sapiens2.git
 pointmap  = ["open3d"]
 dev       = ["pytest", "ruff"]
 docs      = ["mkdocs-material", "pymdown-extensions"]
