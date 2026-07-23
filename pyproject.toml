@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name            = "strands-sapiens"
-version         = "0.1.2"
+version         = "0.2.0"
 description     = "Strands @tool wrappers for Meta Sapiens2 - high-res human-centric vision (seg, normal, pose, pointmap, pretrain backbone)"
 readme          = "README.md"
 requires-python = ">=3.10"
@@ -31,7 +31,8 @@ dependencies = [
   "safetensors",
   "tqdm",
   # torch / torchvision are expected to be installed separately (CUDA build).
-  # The `sapiens` package (facebookresearch/sapiens2) must also be installed from source.
+  # The `sapiens` package (facebookresearch/sapiens2) must also be installed from source.,
+    "strands-mcp-server"
 ]
 
 [project.urls]
@@ -40,6 +41,9 @@ Documentation = "https://cagataycali.github.io/strands-sapiens/"
 Repository    = "https://github.com/cagataycali/strands-sapiens"
 Changelog     = "https://github.com/cagataycali/strands-sapiens/blob/main/CHANGELOG.md"
 Issues        = "https://github.com/cagataycali/strands-sapiens/issues"
+
+[project.scripts]
+strands-sapiens = "strands_sapiens.mcp:main"
 
 [project.optional-dependencies]
 # NOTE: sapiens2 must be installed from source - PyPI does not allow direct git URLs.

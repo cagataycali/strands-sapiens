@@ -24,6 +24,36 @@ Wraps Meta's [Sapiens2](https://github.com/facebookresearch/sapiens2) - a family
 
 Every tool returns the standard Strands `ToolResult` format (`status` + `content` list with `text`, `json`, and inline `image` blocks), so the agent can **read structured data and see visual output** in a single call.
 
+## 🔌 Use as an MCP server
+
+Use strands-sapiens from **Claude Code, Claude Desktop, Cursor, Kiro, or any MCP client** — all 8 Sapiens tools (`sapiens_seg`, `sapiens_pose`, `sapiens_normal`, ...) become MCP tools.
+
+```bash
+claude mcp add sapiens -- uvx strands-sapiens
+```
+
+Claude Desktop config:
+
+```json
+{
+  "mcpServers": {
+    "sapiens": {
+      "command": "uvx",
+      "args": ["strands-sapiens"]
+    }
+  }
+}
+```
+
+Options:
+
+```bash
+strands-sapiens --tools sapiens_seg,sapiens_pose   # subset
+strands-sapiens --http --port 8000                 # HTTP mode
+```
+
+---
+
 ## Tools
 
 | Tool | What it does | Model sizes |
